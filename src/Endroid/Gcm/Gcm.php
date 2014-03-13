@@ -53,7 +53,7 @@ class Gcm
             $this->apiUrl = $apiUrl;
         }
 
-        $this->browser = new Browser(new MultiCurl());
+        $this->browser = new Browser();
     }
 
     /**
@@ -84,17 +84,10 @@ class Gcm
             $data['registration_ids'] = $registrationIds;
             $this->responses[] = $this->browser->post($this->apiUrl, $headers, json_encode($data));
         }
-        $this->browser->getClient()->flush();
 
-        // Determine success
-        foreach ($this->responses as $response) {
-            $message = json_decode($response->getContent());
-            if ($message === null || $message->success == 0 || $message->failure > 0) {
-                return false;
-            }
-        }
 
-        return true;
+        return $this->responses;
+       
     }
 
     /**
